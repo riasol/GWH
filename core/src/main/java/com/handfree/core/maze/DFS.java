@@ -1,6 +1,9 @@
 package com.handfree.core.maze;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,6 +113,10 @@ public class DFS {
 	    Cell test = (Cell) obj;
 	    return index == test.index;
 	}
+
+	public boolean wallIsOpen(DIRECTION n) {
+	    return !wall.get(n);
+	}
     }
 
     public List<Cell> generate(int width, int height) {
@@ -130,35 +137,38 @@ public class DFS {
 		currentCell.wallOpen(cell, width, all.size());
 		all.set(cell.index(), cell);
 		all.set(currentCell.index(), currentCell);
-		stack.push(cell);
+		stack.push(currentCell);
 		currentCell = cell;
 		visitedCells++;
 	    } else {
 		currentCell = stack.pop();
 	    }
 	}
-	sortStack(stack);
-	return stack;
+	List<Cell> list = sortStack(stack);
+	return list;
     }
 
-    public static List<Cell> sortStack(Stack<Cell> stack) {
-	int tot = stack.size();
-	List<Cell> result = new ArrayList<DFS.Cell>();
-	while (result.size() < tot) {
-	    short idx = 0;
-	    while (true) {
-		System.out.println("Trying " + idx);
-		Cell el = stack.get(idx++);
-		if (el.index() == result.size()) {
-		    result.add(el);
-		    stack.remove(idx - 1);
-		    idx = 0;
-		    System.out.println("Adding " + el.index());
-		    break;
-		}
+    public static List<Cell> sortStack(final Stack<Cell> stack) {
+	List<Cell> list = new ArrayList<DFS.Cell>();
+	while (true) {
+	    try {
+		list.add(stack.pop());
+	    } catch (EmptyStackException e) {
+		break;
 	    }
+
 	}
-	return result;
+	Collections.sort(list, new Comparator<Cell>() {
+
+	    @Override
+	    public int compare(Cell o1, Cell o2) {
+		if (o1.index() == o2.index()) {
+		    return 0;
+		}
+		return o1.index() > o2.index() ? 1 : -1;
+	    }
+	});
+	return list;
     }
 
     public List<Cell> findClosedNeighbors(Cell cell, int width, List<Cell> all) {

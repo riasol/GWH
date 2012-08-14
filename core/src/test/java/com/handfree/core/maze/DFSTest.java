@@ -37,8 +37,8 @@ public class DFSTest {
 	stack.push(new Cell(0));
 	stack.pop();
 	List<Cell> list = DFS.sortStack(stack);
-	Assert.assertEquals(0, list.get(0).index());
-	Assert.assertEquals(2, list.get(2).index());
+	Assert.assertEquals(1, list.get(0).index());
+	Assert.assertEquals(3, list.get(2).index());
     }
 
     @Test

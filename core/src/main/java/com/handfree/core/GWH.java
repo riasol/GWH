@@ -16,6 +16,7 @@ public class GWH implements Game {
     {
 	plays.add(new PearsGame());
 	plays.add(new MazeGame());
+	plays.add(new HatchetGame());
     }
 
     @Override

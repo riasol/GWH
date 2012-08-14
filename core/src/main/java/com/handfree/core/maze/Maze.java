@@ -12,6 +12,7 @@ import playn.core.ImageLayer;
 import pythagoras.f.Point;
 
 import com.handfree.core.maze.DFS.Cell;
+import com.handfree.core.maze.DFS.Cell.DIRECTION;
 
 public class Maze {
     private final GroupLayer groupLayer;
@@ -33,7 +34,14 @@ public class Maze {
 	List<Cell> cells = new DFS().generate((int) sizeCells.x, (int) sizeCells.y);
 	Point pos = new Point(0, 0);
 	for (Cell cell : cells) {
-	    c.drawLine(pos.x, pos.y, pos.x + step.x, pos.y);
+	    if (cell.wallIsOpen(DIRECTION.N))
+		c.drawLine(pos.x, pos.y, pos.x + step.x, pos.y);
+	    if (cell.wallIsOpen(DIRECTION.E))
+		c.drawLine(pos.x + step.x, pos.y, pos.x + step.x, pos.y + step.y);
+	    if (cell.wallIsOpen(DIRECTION.S))
+		c.drawLine(pos.x + step.x, pos.y + step.y, pos.x, pos.y + step.y);
+	    if (cell.wallIsOpen(DIRECTION.W))
+		c.drawLine(pos.x, pos.y + step.y, pos.x, pos.y);
 	    if (cell.index() != 0 && cell.index() % sizeCells.x == 0) {
 		pos.x = 0;
 		pos.y += sizePx.y / sizeCells.y;
