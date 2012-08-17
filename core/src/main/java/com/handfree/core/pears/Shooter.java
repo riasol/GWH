@@ -3,21 +3,22 @@ package com.handfree.core.pears;
 import static playn.core.PlayN.assets;
 import static playn.core.PlayN.graphics;
 import static playn.core.PlayN.log;
-
-import com.handfree.core.IActor;
-
 import playn.core.GroupLayer;
 import playn.core.Image;
 import playn.core.Layer;
 import playn.core.ResourceCallback;
 
+import com.handfree.core.IActor;
+
 public class Shooter implements IActor {
     private final GroupLayer myLayer;
     private final Layer layer;
-    public float x, y, rotation;
+    public float x, y, xBase, yBase, rotation;
 
     public Shooter(final GroupLayer baseLayer, final float x, final float y) {
 	myLayer = baseLayer;
+	xBase = 200;
+	yBase = 200;
 	image = assets().getImage("pears/images/shooter.png");
 	layer = graphics().createImageLayer(image);
 	image.addCallback(new ResourceCallback<Image>() {
@@ -32,7 +33,6 @@ public class Shooter implements IActor {
 	    @Override
 	    public void error(Throwable err) {
 		log().error("Error loading image", err);
-
 	    }
 	});
     }
@@ -41,6 +41,6 @@ public class Shooter implements IActor {
 
     @Override
     public void update(float delta) {
-	layer.setOrigin(x, y);
+	layer.setTranslation(xBase + x, yBase + y);
     }
 }

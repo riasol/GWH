@@ -1,9 +1,10 @@
 package com.handfree.core.maze;
 
+import static playn.core.PlayN.log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,7 +128,7 @@ public class DFS {
 	}
 	Stack<Cell> stack = new Stack<DFS.Cell>();
 	int cellIndex = randomCell(tot - 1);
-	Cell currentCell = all.get(cellIndex);
+	Cell currentCell = firstCell = all.get(cellIndex);
 	int visitedCells = 1;
 	while (visitedCells < tot) {
 	    List<Cell> neighbors = findClosedNeighbors(currentCell, width, all);
@@ -135,6 +136,7 @@ public class DFS {
 		Cell cell = neighbors.get(randomCell(neighbors.size() - 1));
 		cell.wallOpen(currentCell, width, all.size());
 		currentCell.wallOpen(cell, width, all.size());
+		log().debug("Opening " + cell.index() + " " + currentCell.index());
 		all.set(cell.index(), cell);
 		all.set(currentCell.index(), currentCell);
 		stack.push(currentCell);
@@ -144,21 +146,7 @@ public class DFS {
 		currentCell = stack.pop();
 	    }
 	}
-	List<Cell> list = sortStack(stack);
-	return list;
-    }
-
-    public static List<Cell> sortStack(final Stack<Cell> stack) {
-	List<Cell> list = new ArrayList<DFS.Cell>();
-	while (true) {
-	    try {
-		list.add(stack.pop());
-	    } catch (EmptyStackException e) {
-		break;
-	    }
-
-	}
-	Collections.sort(list, new Comparator<Cell>() {
+	Collections.sort(all, new Comparator<Cell>() {
 
 	    @Override
 	    public int compare(Cell o1, Cell o2) {
@@ -168,7 +156,7 @@ public class DFS {
 		return o1.index() > o2.index() ? 1 : -1;
 	    }
 	});
-	return list;
+	return all;
     }
 
     public List<Cell> findClosedNeighbors(Cell cell, int width, List<Cell> all) {
@@ -180,7 +168,6 @@ public class DFS {
 	    }
 	}
 	return neighbors;
-
     }
 
     private int randomCell(int tot) {
@@ -212,5 +199,11 @@ public class DFS {
 	    sides.put(DIRECTION.W, cell.index() - 1);//W  
 	}
 	return sides;
+    }
+
+    private Cell firstCell;
+
+    public Cell getFirstCell() {
+	return firstCell;
     }
 }

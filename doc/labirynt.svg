@@ -7,6 +7,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="1044.4141"
@@ -19,7 +20,30 @@
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
-     id="defs4" />
+     id="defs4">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3770">
+      <stop
+         style="stop-color:#008000;stop-opacity:1;"
+         offset="0"
+         id="stop3772" />
+      <stop
+         style="stop-color:#008000;stop-opacity:0;"
+         offset="1"
+         id="stop3774" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3770"
+       id="radialGradient3776"
+       cx="-667.14288"
+       cy="205.62222"
+       fx="-667.14288"
+       fy="205.62222"
+       r="15.714286"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -27,8 +51,8 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.35"
-     inkscape:cx="148.58819"
+     inkscape:zoom="0.7"
+     inkscape:cx="-374.598"
      inkscape:cy="521.27515"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -170,5 +194,20 @@
          id="tspan3807"
          x="62.857143"
          y="55.523052">Labirynt na czas</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient3776);fill-opacity:1;stroke:#432525;stroke-width:0.15714286000000000;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="voyager"
+       sodipodi:cx="-667.14288"
+       sodipodi:cy="205.62222"
+       sodipodi:rx="15.714286"
+       sodipodi:ry="15.714286"
+       d="m -651.4286,205.62222 a 15.714286,15.714286 0 1 1 0,-0.003 l -15.71428,0.003 z"
+       transform="matrix(0.63636364,0,0,0.63636364,-182.52486,404.21537)"
+       sodipodi:start="0"
+       sodipodi:end="6.2830009"
+       inkscape:label="#path3000"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
   </g>
 </svg>

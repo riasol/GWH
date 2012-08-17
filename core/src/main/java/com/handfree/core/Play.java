@@ -1,5 +1,6 @@
 package com.handfree.core;
 
+import playn.core.Keyboard;
 
 public abstract class Play {
 
@@ -15,4 +16,5 @@ public abstract class Play {
     public void paint(float alpha) {
     }
 
+    public abstract Keyboard.Listener getKeyboardListener();
 }

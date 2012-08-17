@@ -1,15 +1,14 @@
 package com.handfree.core;
 
 import static playn.core.PlayN.graphics;
-import static playn.core.PlayN.keyboard;
 import playn.core.GroupLayer;
-import playn.core.Keyboard;
 import playn.core.Keyboard.Event;
+import playn.core.Keyboard.Listener;
 import playn.core.Keyboard.TypedEvent;
 
 import com.handfree.core.pears.Shooter;
 
-public class PearsGame extends Play implements Keyboard.Listener {
+public class PearsGame extends Play {
     public static class PearsConfig {
 	float[] gameSize = new float[] { 400, 300 };
     }
@@ -21,72 +20,75 @@ public class PearsGame extends Play implements Keyboard.Listener {
 
     @Override
     public void init() {
-	GroupLayer layer = graphics().createGroupLayer();
-	graphics().rootLayer().add(layer);
-	shooter = new Shooter(layer, 100, 100);
-	keyboard().setListener(this);
+	baseLayer = graphics().createGroupLayer();
+	graphics().rootLayer().add(baseLayer);
+	shooter = new Shooter(baseLayer, 100, 100);
     }
 
     @Override
     public void shutdown() {
-	// TODO Auto-generated method stub
+	graphics().rootLayer().remove(baseLayer);
 
     }
 
     private boolean pressLeft, pressUp, pressRight, pressDown;
 
-    @Override
-    public void onKeyDown(Event event) {
-	switch (event.key()) {
-	case LEFT:
-	    pressLeft = true;
-	    break;
-	case UP:
-	    pressUp = true;
-	    break;
-	case RIGHT:
-	    pressRight = true;
-	    break;
-	case DOWN:
-	    pressDown = true;
-	    break;
-
-	default:
-	    break;
-	}
-
-    }
-
-    @Override
-    public void onKeyTyped(TypedEvent event) {
-	// TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onKeyUp(Event event) {
-	switch (event.key()) {
-	case LEFT:
-	    pressLeft = false;
-	    break;
-	case UP:
-	    pressUp = false;
-	    break;
-	case RIGHT:
-	    pressRight = false;
-	    break;
-	case DOWN:
-	    pressDown = false;
-	    break;
-
-	default:
-	    break;
-	}
-
-    }
-
     private float rotation = 0;
     private Shooter shooter;
+    private final Listener keyListener = new Listener() {
+
+	@Override
+	public void onKeyDown(Event event) {
+	    switch (event.key()) {
+	    case LEFT:
+		pressLeft = true;
+		break;
+	    case UP:
+		pressUp = true;
+		break;
+	    case RIGHT:
+		pressRight = true;
+		break;
+	    case DOWN:
+		pressDown = true;
+		break;
+
+	    default:
+		break;
+	    }
+
+	}
+
+	@Override
+	public void onKeyTyped(TypedEvent event) {
+	    // TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onKeyUp(Event event) {
+	    switch (event.key()) {
+	    case LEFT:
+		pressLeft = false;
+		break;
+	    case UP:
+		pressUp = false;
+		break;
+	    case RIGHT:
+		pressRight = false;
+		break;
+	    case DOWN:
+		pressDown = false;
+		break;
+
+	    default:
+		break;
+	    }
+
+	}
+    };
+
+    private GroupLayer baseLayer;
 
     @Override
     public void update(float delta) {
@@ -103,5 +105,10 @@ public class PearsGame extends Play implements Keyboard.Listener {
 	    shooter.y = r * (float) Math.sin(rotation);
 	}
 	shooter.update(delta);
+    }
+
+    @Override
+    public Listener getKeyboardListener() {
+	return keyListener;
     }
 }
