@@ -19,7 +19,7 @@ public class Shooter implements IActor {
 	myLayer = baseLayer;
 	xBase = 200;
 	yBase = 200;
-	image = assets().getImage("pears/images/shooter.png");
+	image = assets().getImage("pears/images/shoter.png");
 	layer = graphics().createImageLayer(image);
 	image.addCallback(new ResourceCallback<Image>() {
 
@@ -42,5 +42,7 @@ public class Shooter implements IActor {
     @Override
     public void update(float delta) {
 	layer.setTranslation(xBase + x, yBase + y);
+	layer.setRotation((float) (rotation + Math.PI / 2));
+
     }
 }

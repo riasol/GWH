@@ -23,12 +23,16 @@ public class PearsGame extends Play {
 	baseLayer = graphics().createGroupLayer();
 	graphics().rootLayer().add(baseLayer);
 	shooter = new Shooter(baseLayer, 100, 100);
+	instructions = new InstructionsView();
+	instructions.setText("Arrows(left/right) - rotation\nSpace - shot");
+	updateShoter();
+	update(0);
     }
 
     @Override
     public void shutdown() {
 	graphics().rootLayer().remove(baseLayer);
-
+	instructions.shutdown();
     }
 
     private boolean pressLeft, pressUp, pressRight, pressDown;
@@ -90,6 +94,8 @@ public class PearsGame extends Play {
 
     private GroupLayer baseLayer;
 
+    private InstructionsView instructions;
+
     @Override
     public void update(float delta) {
 	float step = 0.01f;
@@ -100,11 +106,16 @@ public class PearsGame extends Play {
 	    rotation -= step;
 	}
 	if (pressLeft || pressRight) {
-	    float r = 300;
-	    shooter.x = r * (float) Math.cos(rotation);
-	    shooter.y = r * (float) Math.sin(rotation);
+	    updateShoter();
 	}
 	shooter.update(delta);
+    }
+
+    private void updateShoter() {
+	float r = 180;
+	shooter.x = r * (float) Math.cos(rotation);
+	shooter.y = r * (float) Math.sin(rotation);
+	shooter.rotation = rotation;
     }
 
     @Override

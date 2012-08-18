@@ -56,6 +56,21 @@ public class DFSTest {
 	Assert.assertFalse("E closed", c.wallIsOpen(DIRECTION.E));
 	Assert.assertTrue("S open", c.wallIsOpen(DIRECTION.S));
 	Assert.assertFalse("W closed", c.wallIsOpen(DIRECTION.W));
+	c = new Cell(0);
+	Assert.assertFalse("N", c.wallIsOpen(DIRECTION.N));
+	Assert.assertFalse("E", c.wallIsOpen(DIRECTION.E));
+	Assert.assertFalse("S", c.wallIsOpen(DIRECTION.S));
+	Assert.assertFalse("W", c.wallIsOpen(DIRECTION.W));
+	c2 = new Cell(1);
+	c2.wallOpen(c, 3, 9);
+	Assert.assertFalse("N", c2.wallIsOpen(DIRECTION.N));
+	Assert.assertFalse("E", c2.wallIsOpen(DIRECTION.E));
+	Assert.assertFalse("S", c2.wallIsOpen(DIRECTION.S));
+	Assert.assertTrue("W", c2.wallIsOpen(DIRECTION.W));
+	Assert.assertFalse("N", c.wallIsOpen(DIRECTION.N));
+	Assert.assertTrue("E", c.wallIsOpen(DIRECTION.E));
+	Assert.assertFalse("S", c.wallIsOpen(DIRECTION.S));
+	Assert.assertFalse("W", c.wallIsOpen(DIRECTION.W));
     }
 
     @Test

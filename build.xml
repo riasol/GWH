@@ -183,4 +183,7 @@
       </classpath>
     </java>
   </target>
+	<target name="deploy" depends="compile-html">
+<ftp userid="" password="" server=""></ftp>
+</target>
 </project>

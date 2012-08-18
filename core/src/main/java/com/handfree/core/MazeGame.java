@@ -12,6 +12,8 @@ import com.handfree.core.maze.Maze;
 
 public class MazeGame extends Play {
 
+    private InstructionsView instructions;
+
     @Override
     public String name() {
 	return "Maze";
@@ -22,12 +24,14 @@ public class MazeGame extends Play {
 	groupLayer = graphics().createGroupLayer();
 	graphics().rootLayer().add(groupLayer);
 	maze = new Maze(groupLayer);
+	instructions = new InstructionsView();
+	instructions.setText("Use arrows");
     }
 
     @Override
     public void shutdown() {
 	graphics().rootLayer().remove(groupLayer);
-
+	instructions.shutdown();
     }
 
     private DIRECTION voyagerDirection = null;

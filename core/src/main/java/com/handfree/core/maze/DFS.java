@@ -89,7 +89,7 @@ public class DFS {
 	    return false;//TODO
 	}
 
-	private final Map<DIRECTION, Boolean> wall = new HashMap<DFS.Cell.DIRECTION, Boolean>();
+	private final Map<DIRECTION, Boolean> wall = new HashMap<DFS.Cell.DIRECTION, Boolean>(4);
 	{
 	    wall.put(DIRECTION.N, true);
 	    wall.put(DIRECTION.E, true);
@@ -136,7 +136,8 @@ public class DFS {
 		Cell cell = neighbors.get(randomCell(neighbors.size() - 1));
 		cell.wallOpen(currentCell, width, all.size());
 		currentCell.wallOpen(cell, width, all.size());
-		log().debug("Opening " + cell.index() + " " + currentCell.index());
+		//System.out.println("Opening " + cell.index() + " - " + currentCell.index());
+		log().info("Opening " + cell.index() + " - " + currentCell.index());
 		all.set(cell.index(), cell);
 		all.set(currentCell.index(), currentCell);
 		stack.push(currentCell);

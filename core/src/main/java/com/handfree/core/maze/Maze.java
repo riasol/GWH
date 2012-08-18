@@ -24,11 +24,23 @@ import com.handfree.core.maze.DFS.Cell.DIRECTION;
 
 public class Maze {
     private final GroupLayer groupLayer;
-    private Point sizeCells;
-    private Point step;
+    private final Point sizeCells = new Point(10, 15);
+    private final Point step = new Point(20, 20);
     private Canvas canvas;
     private CanvasImage canvasImage;
     private ImageLayer voyagerLayer;
+    private final Point basePos = new Point(100, 100);
+    private DFS dfs;
+    private final Map<DIRECTION, Point> map = new HashMap<DFS.Cell.DIRECTION, Point>();
+    private Point voyagerPosition;
+    private List<Cell> cells = new ArrayList<DFS.Cell>();
+    private ImageLayer finishLayer;
+    {
+	map.put(DIRECTION.N, new Point(0, -1));
+	map.put(DIRECTION.E, new Point(1, 0));
+	map.put(DIRECTION.S, new Point(0, 1));
+	map.put(DIRECTION.W, new Point(-1, 0));
+    }
 
     public Maze(GroupLayer groupLayer) {
 	super();
@@ -55,29 +67,42 @@ public class Maze {
 
 	    }
 	});
-    }
+	Image finish = assets().getImage("maze/images/finish.png");
+	finishLayer = graphics().createImageLayer(finish);
+	finish.addCallback(new ResourceCallback<Image>() {
 
-    private Point basePos;
-    private DFS dfs;
+	    @Override
+	    public void done(Image image) {
+		finishLayer.setOrigin(image.width() / 2f, image.height() / 2f);
+		groupLayer.add(finishLayer);
+	    }
+
+	    @Override
+	    public void error(Throwable err) {
+		// TODO Auto-generated method stub
+
+	    }
+	});
+    }
 
     private void createMaze() {
 	initGraphics();
 	dfs = new DFS();
 	cells = dfs.generate((int) sizeCells.x, (int) sizeCells.y);
 	Cell firstCell = dfs.getFirstCell();//cells.get(cells.size() - 1)
-	basePos = new Point(100, 100);
 	Point pos = new Point(basePos.x, basePos.y);
 	voyagerPosition = new Point(pos.x + firstCell.index() % sizeCells.x * step.x + step.x / 2, pos.y + (float) Math.ceil((firstCell.index() + 1) / sizeCells.x) * step.y - step.y / 2);
 	voyagerLayer.setTranslation(voyagerPosition.x, voyagerPosition.y);
+	finishLayer.setTranslation(pos.x + step.x / 2, pos.y + step.y / 2);
 	boolean all = false;
 	for (Cell cell : cells) {
-	    if (cell.wallIsOpen(DIRECTION.N) || all)
+	    if (!cell.wallIsOpen(DIRECTION.N) || all)
 		canvas.drawLine(pos.x, pos.y, pos.x + step.x, pos.y);
-	    if (cell.wallIsOpen(DIRECTION.E) || all)
+	    if (!cell.wallIsOpen(DIRECTION.E) || all)
 		canvas.drawLine(pos.x + step.x, pos.y, pos.x + step.x, pos.y + step.y);
-	    if (cell.wallIsOpen(DIRECTION.S) || all)
+	    if (!cell.wallIsOpen(DIRECTION.S) || all)
 		canvas.drawLine(pos.x + step.x, pos.y + step.y, pos.x, pos.y + step.y);
-	    if (cell.wallIsOpen(DIRECTION.W) || all)
+	    if (!cell.wallIsOpen(DIRECTION.W) || all)
 		canvas.drawLine(pos.x, pos.y + step.y, pos.x, pos.y);
 
 	    if (cell.index() != 0 && (cell.index() + 1) % sizeCells.x == 0) {
@@ -92,22 +117,10 @@ public class Maze {
     }
 
     private void initGraphics() {
-	sizeCells = new Point(10, 15);
-	step = new Point(20, 20);
 	canvasImage = graphics().createImage(GWHConstans.WIDTH, GWHConstans.HEIGHT);
 	canvas = canvasImage.canvas();
 	canvas.setStrokeColor(Color.rgb(127, 127, 127));
 	canvas.setStrokeWidth(1);
-    }
-
-    private final Map<DIRECTION, Point> map = new HashMap<DFS.Cell.DIRECTION, Point>();
-    private Point voyagerPosition;
-    private List<Cell> cells = new ArrayList<DFS.Cell>();
-    {
-	map.put(DIRECTION.N, new Point(0, -1));
-	map.put(DIRECTION.E, new Point(1, 0));
-	map.put(DIRECTION.S, new Point(0, 1));
-	map.put(DIRECTION.W, new Point(-1, 0));
     }
 
     public void moveVoyager(DIRECTION d) {
