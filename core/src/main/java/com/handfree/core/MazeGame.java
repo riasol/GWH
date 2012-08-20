@@ -6,6 +6,7 @@ import playn.core.Keyboard;
 import playn.core.Keyboard.Event;
 import playn.core.Keyboard.Listener;
 import playn.core.Keyboard.TypedEvent;
+import playn.core.PlayN;
 
 import com.handfree.core.maze.DFS.Cell.DIRECTION;
 import com.handfree.core.maze.Maze;
@@ -25,7 +26,7 @@ public class MazeGame extends Play {
 	graphics().rootLayer().add(groupLayer);
 	maze = new Maze(groupLayer);
 	instructions = new InstructionsView();
-	instructions.setText("Use arrows");
+	instructions.setText("Use arrows to catch red point");
     }
 
     @Override
@@ -69,16 +70,18 @@ public class MazeGame extends Play {
 
 	@Override
 	public void onKeyUp(Event event) {
-	    // TODO Auto-generated method stub
+	    voyagerDirection = null;
 
 	}
     };
+    private double lastUpdate = 0;
 
     @Override
     public void update(float delta) {
-	if (voyagerDirection != null) {
+	maze.update(delta);
+	if ((PlayN.currentTime() - lastUpdate) > 100 && voyagerDirection != null) {
+	    lastUpdate = PlayN.currentTime();
 	    maze.moveVoyager(voyagerDirection);
-	    voyagerDirection = null;
 	}
     }
 

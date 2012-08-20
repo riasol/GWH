@@ -2,7 +2,6 @@ package com.handfree.core.maze;
 
 import static playn.core.PlayN.assets;
 import static playn.core.PlayN.graphics;
-import static playn.core.PlayN.log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,30 +16,34 @@ import playn.core.Image;
 import playn.core.ImageLayer;
 import playn.core.ResourceCallback;
 import pythagoras.f.Point;
+import tripleplay.util.Timer;
 
 import com.handfree.core.GWHConstans;
 import com.handfree.core.maze.DFS.Cell;
 import com.handfree.core.maze.DFS.Cell.DIRECTION;
+import com.handfree.core.maze.Watchman.WatchmanHandler;
 
-public class Maze {
+public class Maze implements WatchmanHandler {
     private final GroupLayer groupLayer;
-    private final Point sizeCells = new Point(10, 15);
-    private final Point step = new Point(20, 20);
+    private final Point sizeCells = new Point(12, 21);//3, 3
+    private final Point step = new Point(15, 15);
+    private final Point basePos = new Point(285, 117);
     private Canvas canvas;
     private CanvasImage canvasImage;
     private ImageLayer voyagerLayer;
-    private final Point basePos = new Point(100, 100);
     private DFS dfs;
+    private Watchman watchMan;
     private final Map<DIRECTION, Point> map = new HashMap<DFS.Cell.DIRECTION, Point>();
-    private Point voyagerPosition;
-    private List<Cell> cells = new ArrayList<DFS.Cell>();
-    private ImageLayer finishLayer;
     {
 	map.put(DIRECTION.N, new Point(0, -1));
 	map.put(DIRECTION.E, new Point(1, 0));
 	map.put(DIRECTION.S, new Point(0, 1));
 	map.put(DIRECTION.W, new Point(-1, 0));
     }
+    private Point voyagerPosition;
+    private List<Cell> cells = new ArrayList<DFS.Cell>();
+    private ImageLayer finishLayer;
+    private Timer changingTimer;
 
     public Maze(GroupLayer groupLayer) {
 	super();
@@ -50,9 +53,12 @@ public class Maze {
     }
 
     private void loadResources() {
-	Image image = assets().getImage("maze/images/voyager.png");
-	voyagerLayer = graphics().createImageLayer(image);
-	image.addCallback(new ResourceCallback<Image>() {
+	Image bgImage = assets().getImage("maze/images/labirynt-poslaniec.png");
+	ImageLayer bgLayer = graphics().createImageLayer(bgImage);
+	groupLayer.add(bgLayer);
+	Image voyagerImage = assets().getImage("maze/images/voyager.png");
+	voyagerLayer = graphics().createImageLayer(voyagerImage);
+	voyagerImage.addCallback(new ResourceCallback<Image>() {
 
 	    @Override
 	    public void done(Image image) {
@@ -86,10 +92,16 @@ public class Maze {
     }
 
     private void createMaze() {
-	initGraphics();
+	if (canvasImage == null) {
+	    canvasImage = graphics().createImage(GWHConstans.WIDTH, GWHConstans.HEIGHT);
+	    canvas = canvasImage.canvas();
+	    canvas.setStrokeColor(Color.rgb(127, 127, 127));
+	    canvas.setStrokeWidth(1);
+	}
+	canvas.clear();
 	dfs = new DFS();
 	cells = dfs.generate((int) sizeCells.x, (int) sizeCells.y);
-	Cell firstCell = dfs.getFirstCell();//cells.get(cells.size() - 1)
+	Cell firstCell = cells.get(cells.size() - 1);//dfs.getFirstCell() 
 	Point pos = new Point(basePos.x, basePos.y);
 	voyagerPosition = new Point(pos.x + firstCell.index() % sizeCells.x * step.x + step.x / 2, pos.y + (float) Math.ceil((firstCell.index() + 1) / sizeCells.x) * step.y - step.y / 2);
 	voyagerLayer.setTranslation(voyagerPosition.x, voyagerPosition.y);
@@ -114,26 +126,57 @@ public class Maze {
 	}
 	ImageLayer imLay = graphics().createImageLayer(canvasImage);
 	groupLayer.add(imLay);
-    }
-
-    private void initGraphics() {
-	canvasImage = graphics().createImage(GWHConstans.WIDTH, GWHConstans.HEIGHT);
-	canvas = canvasImage.canvas();
-	canvas.setStrokeColor(Color.rgb(127, 127, 127));
-	canvas.setStrokeWidth(1);
+	watchMan = new Watchman(this, 2000);
     }
 
     public void moveVoyager(DIRECTION d) {
-	int y = (int) (sizeCells.x * (((voyagerPosition.y - basePos.y + step.y / 2) / step.y) - 1));
-	int x = (int) ((voyagerPosition.x - basePos.x + step.x / 2) / step.x);
-	int cellIndex = x + y - 1;
-	log().debug(String.valueOf(cellIndex));
+	int cellIndex = cellIndexFromPosition();
+	//log().debug(String.valueOf(cellIndex));
 	Cell c = cells.get(cellIndex);
 	if (c.wallIsOpen(d)) {
 	    voyagerPosition.x += map.get(d).x * step.x;
 	    voyagerPosition.y += map.get(d).y * step.y;
 	    voyagerLayer.setTranslation(voyagerPosition.x, voyagerPosition.y);
 	}
+	cellIndex = cellIndexFromPosition();
+	if (cellIndex == 0) {
+
+	    changingTimer = new Timer();
+	    changingTimer.after(1000, new Runnable() {
+
+		@Override
+		public void run() {
+		    createMaze();
+		}
+	    });
+
+	}
+    }
+
+    private int cellIndexFromPosition() {
+	int y = (int) (sizeCells.x * (((voyagerPosition.y - basePos.y + step.y / 2) / step.y) - 1));
+	int x = (int) ((voyagerPosition.x - basePos.x + step.x / 2) / step.x);
+	int cellIndex = x + y - 1;
+	return cellIndex;
+    }
+
+    public void update(float delta) {
+	if (changingTimer != null) {
+	    changingTimer.update();
+	}
+
+    }
+
+    @Override
+    public void updateWatchmanToFinish(long miliseconds) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void finishWatchman() {
+	// TODO Auto-generated method stub
+
     }
 
 }

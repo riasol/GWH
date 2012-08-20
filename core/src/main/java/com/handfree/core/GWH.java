@@ -3,7 +3,6 @@ package com.handfree.core;
 import static playn.core.PlayN.assets;
 import static playn.core.PlayN.graphics;
 import static playn.core.PlayN.keyboard;
-import static playn.core.PlayN.log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,6 @@ public class GWH implements Game, Keyboard.Listener {
 
     @Override
     public void init() {
-	//graphics().setSize(700, 540);
 	keyboard().setListener(this);
 	Image bgImage = assets().getImage("images/bg.png");
 	ImageLayer bgLayer = graphics().createImageLayer(bgImage);
@@ -73,7 +71,7 @@ public class GWH implements Game, Keyboard.Listener {
     @Override
     public void onKeyDown(Event event) {
 	activePlay.getKeyboardListener().onKeyDown(event);
-	log().debug(event.toString());
+	//log().debug(event.toString());
 	switch (event.key()) {
 	case N:
 	    startNewGame();

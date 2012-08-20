@@ -1,7 +1,5 @@
 package com.handfree.core.maze;
 
-import static playn.core.PlayN.log;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -137,7 +135,7 @@ public class DFS {
 		cell.wallOpen(currentCell, width, all.size());
 		currentCell.wallOpen(cell, width, all.size());
 		//System.out.println("Opening " + cell.index() + " - " + currentCell.index());
-		log().info("Opening " + cell.index() + " - " + currentCell.index());
+		//log().info("Opening " + cell.index() + " - " + currentCell.index());
 		all.set(cell.index(), cell);
 		all.set(currentCell.index(), currentCell);
 		stack.push(currentCell);

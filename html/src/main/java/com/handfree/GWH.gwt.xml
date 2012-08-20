@@ -5,6 +5,6 @@
   <source path='html'/>
 
   <public path="resources" />
-
+<inherits name="tripleplay.TriplePlay"/>
   <entry-point class='com.handfree.html.GWHHtml'/>
 </module>

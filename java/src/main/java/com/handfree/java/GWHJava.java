@@ -7,9 +7,10 @@ import com.handfree.core.GWH;
 
 public class GWHJava {
 
-  public static void main(String[] args) {
-    JavaPlatform platform = JavaPlatform.register();
-    platform.assets().setPathPrefix("com/handfree/resources");
-    PlayN.run(new GWH());
-  }
+    public static void main(String[] args) {
+	JavaPlatform platform = JavaPlatform.register();
+	platform.graphics().setSize(700, 540);
+	platform.assets().setPathPrefix("com/handfree/resources");
+	PlayN.run(new GWH());
+    }
 }
