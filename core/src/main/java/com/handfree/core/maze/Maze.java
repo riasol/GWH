@@ -25,11 +25,11 @@ import com.handfree.core.maze.Watchman.WatchmanHandler;
 
 public class Maze implements WatchmanHandler {
     private final GroupLayer groupLayer;
-    private final Point sizeCells = new Point(12, 21);//3, 3
+    //private final Point sizeCells = new Point(12, 21);
+    private final Point sizeCells = new Point(3, 3);
     private final Point step = new Point(15, 15);
     private final Point basePos = new Point(285, 117);
     private Canvas canvas;
-    private CanvasImage canvasImage;
     private ImageLayer voyagerLayer;
     private DFS dfs;
     private Watchman watchMan;
@@ -44,12 +44,72 @@ public class Maze implements WatchmanHandler {
     private List<Cell> cells = new ArrayList<DFS.Cell>();
     private ImageLayer finishLayer;
     private Timer changingTimer;
+    private TimeProgress timeProgress;
+    private int currentRound;
+    private final long[] roundTimes = new long[] { 30000, 25000, 2200, 2000 };
+    private final int roundTotal = roundTimes.length;
+    private RoundCounter roundCounter;
 
     public Maze(GroupLayer groupLayer) {
 	super();
 	this.groupLayer = groupLayer;
+	currentRound = 0;
 	loadResources();
 	createMaze();
+    }
+
+    private void createMaze() {
+	if (currentRound++ > 4) {
+	    return;
+	}
+	CanvasImage canvasImage = null;
+	CanvasImage timerCanvasImage = null;
+	CanvasImage roundCanvasImage = null;
+	if (canvasImage == null) {
+	    canvasImage = graphics().createImage(GWHConstans.WIDTH, GWHConstans.HEIGHT);
+	    canvas = canvasImage.canvas();
+	    canvas.setStrokeColor(Color.rgb(127, 127, 127));
+	    canvas.setStrokeWidth(1);
+	    timerCanvasImage = graphics().createImage(GWHConstans.WIDTH, GWHConstans.HEIGHT);
+	    timeProgress = new TimeProgress(timerCanvasImage.canvas());
+	    timeProgress.reset();
+	    roundCanvasImage = graphics().createImage(GWHConstans.WIDTH, GWHConstans.HEIGHT);
+	    roundCounter = new RoundCounter(roundCanvasImage.canvas());
+	    roundCounter.setTotal(roundTotal);
+	}
+	roundCounter.increment();
+	watchMan = new Watchman(this, roundTimes[currentRound - 1]);
+	canvas.clear();
+	dfs = new DFS();
+	cells = dfs.generate((int) sizeCells.x, (int) sizeCells.y);
+	Cell firstCell = cells.get(cells.size() - 1);//dfs.getFirstCell() 
+	Point pos = new Point(basePos.x, basePos.y);
+	voyagerPosition = new Point(pos.x + firstCell.index() % sizeCells.x * step.x + step.x / 2, pos.y + (float) Math.ceil((firstCell.index() + 1) / sizeCells.x) * step.y - step.y / 2);
+	voyagerLayer.setTranslation(voyagerPosition.x, voyagerPosition.y);
+	finishLayer.setTranslation(pos.x + step.x / 2, pos.y + step.y / 2);
+	boolean all = false;
+	for (Cell cell : cells) {
+	    if (!cell.wallIsOpen(DIRECTION.N) || all)
+		canvas.drawLine(pos.x, pos.y, pos.x + step.x, pos.y);
+	    if (!cell.wallIsOpen(DIRECTION.E) || all)
+		canvas.drawLine(pos.x + step.x, pos.y, pos.x + step.x, pos.y + step.y);
+	    if (!cell.wallIsOpen(DIRECTION.S) || all)
+		canvas.drawLine(pos.x + step.x, pos.y + step.y, pos.x, pos.y + step.y);
+	    if (!cell.wallIsOpen(DIRECTION.W) || all)
+		canvas.drawLine(pos.x, pos.y + step.y, pos.x, pos.y);
+
+	    if (cell.index() != 0 && (cell.index() + 1) % sizeCells.x == 0) {
+		pos.x -= (sizeCells.x - 1) * step.x;
+		pos.y += step.y;
+	    } else {
+		pos.x += step.x;
+	    }
+	}
+	ImageLayer imLay = graphics().createImageLayer(canvasImage);
+	groupLayer.add(imLay);
+	groupLayer.add(graphics().createImageLayer(timerCanvasImage));
+	groupLayer.add(graphics().createImageLayer(roundCanvasImage));
+
     }
 
     private void loadResources() {
@@ -91,44 +151,6 @@ public class Maze implements WatchmanHandler {
 	});
     }
 
-    private void createMaze() {
-	if (canvasImage == null) {
-	    canvasImage = graphics().createImage(GWHConstans.WIDTH, GWHConstans.HEIGHT);
-	    canvas = canvasImage.canvas();
-	    canvas.setStrokeColor(Color.rgb(127, 127, 127));
-	    canvas.setStrokeWidth(1);
-	}
-	canvas.clear();
-	dfs = new DFS();
-	cells = dfs.generate((int) sizeCells.x, (int) sizeCells.y);
-	Cell firstCell = cells.get(cells.size() - 1);//dfs.getFirstCell() 
-	Point pos = new Point(basePos.x, basePos.y);
-	voyagerPosition = new Point(pos.x + firstCell.index() % sizeCells.x * step.x + step.x / 2, pos.y + (float) Math.ceil((firstCell.index() + 1) / sizeCells.x) * step.y - step.y / 2);
-	voyagerLayer.setTranslation(voyagerPosition.x, voyagerPosition.y);
-	finishLayer.setTranslation(pos.x + step.x / 2, pos.y + step.y / 2);
-	boolean all = false;
-	for (Cell cell : cells) {
-	    if (!cell.wallIsOpen(DIRECTION.N) || all)
-		canvas.drawLine(pos.x, pos.y, pos.x + step.x, pos.y);
-	    if (!cell.wallIsOpen(DIRECTION.E) || all)
-		canvas.drawLine(pos.x + step.x, pos.y, pos.x + step.x, pos.y + step.y);
-	    if (!cell.wallIsOpen(DIRECTION.S) || all)
-		canvas.drawLine(pos.x + step.x, pos.y + step.y, pos.x, pos.y + step.y);
-	    if (!cell.wallIsOpen(DIRECTION.W) || all)
-		canvas.drawLine(pos.x, pos.y + step.y, pos.x, pos.y);
-
-	    if (cell.index() != 0 && (cell.index() + 1) % sizeCells.x == 0) {
-		pos.x -= (sizeCells.x - 1) * step.x;
-		pos.y += step.y;
-	    } else {
-		pos.x += step.x;
-	    }
-	}
-	ImageLayer imLay = graphics().createImageLayer(canvasImage);
-	groupLayer.add(imLay);
-	watchMan = new Watchman(this, 2000);
-    }
-
     public void moveVoyager(DIRECTION d) {
 	int cellIndex = cellIndexFromPosition();
 	//log().debug(String.valueOf(cellIndex));
@@ -164,13 +186,14 @@ public class Maze implements WatchmanHandler {
 	if (changingTimer != null) {
 	    changingTimer.update();
 	}
-
+	watchMan.update();
+	timeProgress.update();
+	roundCounter.update();
     }
 
     @Override
     public void updateWatchmanToFinish(long miliseconds) {
-	// TODO Auto-generated method stub
-
+	timeProgress.setProgress(miliseconds);
     }
 
     @Override
