@@ -25,8 +25,8 @@ import com.handfree.core.maze.Watchman.WatchmanHandler;
 
 public class Maze implements WatchmanHandler {
     private final GroupLayer groupLayer;
-    //private final Point sizeCells = new Point(12, 21);
-    private final Point sizeCells = new Point(3, 3);
+    private final Point sizeCells = new Point(12, 21);
+    //private final Point sizeCells = new Point(3, 3);
     private final Point step = new Point(15, 15);
     private final Point basePos = new Point(285, 117);
     private Canvas canvas;
@@ -46,9 +46,13 @@ public class Maze implements WatchmanHandler {
     private Timer changingTimer;
     private TimeProgress timeProgress;
     private int currentRound;
-    private final long[] roundTimes = new long[] { 30000, 25000, 2200, 2000 };
+    private final long[] roundTimes = new long[] { 30000, 25000, 22000, 20000 };
     private final int roundTotal = roundTimes.length;
     private RoundCounter roundCounter;
+    private boolean lazyCreated = false;
+    private CanvasImage canvasImage = null;
+    private CanvasImage timerCanvasImage = null;
+    private CanvasImage roundCanvasImage = null;
 
     public Maze(GroupLayer groupLayer) {
 	super();
@@ -62,10 +66,8 @@ public class Maze implements WatchmanHandler {
 	if (currentRound++ > 4) {
 	    return;
 	}
-	CanvasImage canvasImage = null;
-	CanvasImage timerCanvasImage = null;
-	CanvasImage roundCanvasImage = null;
-	if (canvasImage == null) {
+	if (!lazyCreated) {
+	    lazyCreated = true;
 	    canvasImage = graphics().createImage(GWHConstans.WIDTH, GWHConstans.HEIGHT);
 	    canvas = canvasImage.canvas();
 	    canvas.setStrokeColor(Color.rgb(127, 127, 127));
