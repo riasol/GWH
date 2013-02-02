@@ -20,6 +20,7 @@ public class GWH implements Game, Keyboard.Listener {
     private final List<Play> plays = new ArrayList<Play>();
     {
 	plays.add(new MazeGame());
+	plays.add(new FruitsGame());
 	plays.add(new PearsGame());
 	plays.add(new HatchetGame());
     }
@@ -31,7 +32,7 @@ public class GWH implements Game, Keyboard.Listener {
 	ImageLayer bgLayer = graphics().createImageLayer(bgImage);
 	graphics().rootLayer().add(bgLayer);
 	PlayN.storage().getItem("gameRun");
-	startGame(0);
+	startGame(1);
     }
 
     private int playIndex;

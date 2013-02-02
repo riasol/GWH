@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildpath>
+	<buildpathentry external="true" kind="lib" path="C:/Users/robert/.m2/repository/com/googlecode/gwt-flash/gwt-flash/1.2/gwt-flash-1.2.jar"/>
+	<buildpathentry external="true" kind="lib" path="C:/Users/robert/.m2/repository/com/google/gwt/gwt-user/2.4.0/gwt-user-2.4.0.jar"/>
+</buildpath>
